@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Collections;
-
 import com.musicg.wave.Wave;
 
 import android.os.AsyncTask;
@@ -107,8 +106,26 @@ public class MainActivity extends Activity {
 			Wave wave = new Wave(wavPath);
 			Log.i("wav", wave.toString());
 	    	short[] amps = wave.getSampleAmplitudes();
-	    	rmsPwrMax = getRMSPwrMax(amps,2);
+	    	//List<Float> normalized_data = getNormalizedTimebasedSignal(amps);
+	    	//Log.i("wav", "Normalized: "+ normalized_data.toString());
+	    	rmsPwrMax = getRMSPwrMax(amps,2048);
+			
+			
+
+		    /*byte[] input = wave.getBytes();
+		    final int decompressedLength = input.length;
+		    Log.i("wav", "Decompressed: "+ decompressedLength);
+		    
+		    // Compress the bytes
+			byte[] output = new byte[decompressedLength];
+			Deflater compresser = new Deflater(Deflater.BEST_COMPRESSION);
+			compresser.setInput(input); 
+			compresser.finish();
+			int compressedDataLength = compresser.deflate(output);  		    
+		    rmsPwrMax = compressedDataLength;*/
+			
 			return null;
+			
 		}
 
 	    @Override
@@ -136,8 +153,25 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	private int getRMSPwrMax(short[] amps, int intvl){
-		int window = intvl*44100/1000;
+	/*private List<Float> getNormalizedTimebasedSignal(short[] amps){
+		int n = amps.length;
+		List<Short> ampList = Arrays.asList(ArrayUtils.toObject(amps));
+		List<Float> normalized_data = new ArrayList<Float>();
+		int counter = 0;
+		long sum_pwr = 0;
+		for(short i: ampList){
+			sum_pwr += (long)i * i;	
+		}
+		float tmp_pwr = (float) Math.sqrt((double)sum_pwr);
+		Log.i("wav", "Sum of Energy: "+tmp_pwr);
+		for(short j: ampList){
+			normalized_data.add((float)j/tmp_pwr);
+		}
+		return normalized_data;
+	}*/
+	
+	private int getRMSPwrMax(short[] amps, int numOfSample){
+		int window = numOfSample;
 		int n = amps.length;
 		int n_slide_window = n - window + 1;
 		List<Short> ampList = Arrays.asList(ArrayUtils.toObject(amps));
